@@ -1,8 +1,8 @@
 # API REST de Exportación de Datos de Lotería (V1)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-1.2-blue.svg)](https://your-api-docs-link)
-[![Autor](https://img.shields.io/badge/Autor-Ing.%20Ben%20Gonzalez-lightgrey.svg)](mailto:ben.gonzalez@example.com)
+[![Version](https://img.shields.io/badge/Version-1.2-blue.svg)](docs/documentacion-api.pdf)
+[![Autor](https://img.shields.io/badge/Autor-Ing.%20Ben%20Gonzalez-lightgrey.svg)](mailto:gonzbs97@gmail.com)
 
 Este repositorio contiene la especificación para la API REST de Exportación de Datos de Lotería, diseñada para estandarizar la forma en que los datos de lotería son expuestos por sistemas con arquitecturas heterogéneas. El objetivo principal es homogeneizar el acceso a la información, permitiendo a cada sistema proveedor elegir la representación de datos (JSON o XML) que mejor se adapte a su entorno existente, asegurando la interoperabilidad y flexibilidad.
 
@@ -28,50 +28,50 @@ Este repositorio contiene la especificación para la API REST de Exportación de
 
 ## 1. Visión General
 
-La API de Exportación de Datos de Lotería proporciona un estándar unificado para la consulta y exportación de información contable y de operaciones de lotería. Está diseñada para ser implementada por diversos sistemas, facilitando la integración y el intercambio de datos entre plataformas. [cite_start]Los implementadores deben adherirse a las estructuras de datos definidas en esta especificación para garantizar la compatibilidad. [cite: 69, 71]
+La API de Exportación de Datos de Lotería proporciona un estándar unificado para la consulta y exportación de información contable y de operaciones de lotería. Está diseñada para ser implementada por diversos sistemas, facilitando la integración y el intercambio de datos entre plataformas. Los implementadores deben adherirse a las estructuras de datos definidas en esta especificación para garantizar la compatibilidad. [cite: 69, 71]
 
 ## 2. Características Principales
 
-* [cite_start]**Soporte Dual JSON/XML:** Flexibilidad para exponer datos en JSON, XML, o ambos, según la preferencia del implementador y el consumidor. [cite: 70, 74, 75]
-* [cite_start]**Autenticación Segura:** Utiliza tokens Bearer obtenidos a través de un endpoint de autenticación, garantizando la seguridad de las transacciones. [cite: 73, 98]
-* [cite_start]**Diseño RESTful:** Adherencia a los principios de una arquitectura RESTful, utilizando métodos HTTP estándar para operaciones sobre recursos identificables. [cite: 72]
-* [cite_start]**Filtrado Flexible:** Permite filtrar exportaciones por entidad (agencias/distribuidores), moneda, rango de fechas y tipos de lotería/juegos específicos. [cite: 102, 103, 105, 106, 109, 111]
-* [cite_start]**Validación Robusta de Parámetros:** Incluye validaciones para rangos de fechas y la lógica de ignorar el parámetro `juego` cuando `tipoLoteria` es `multijuego`. [cite: 108, 118]
+* **Soporte Dual JSON/XML:** Flexibilidad para exponer datos en JSON, XML, o ambos, según la preferencia del implementador y el consumidor. [cite: 70, 74, 75]
+* **Autenticación Segura:** Utiliza tokens Bearer obtenidos a través de un endpoint de autenticación, garantizando la seguridad de las transacciones. [cite: 73, 98]
+* **Diseño RESTful:** Adherencia a los principios de una arquitectura RESTful, utilizando métodos HTTP estándar para operaciones sobre recursos identificables. [cite: 72]
+* **Filtrado Flexible:** Permite filtrar exportaciones por entidad (agencias/distribuidores), moneda, rango de fechas y tipos de lotería/juegos específicos. [cite: 102, 103, 105, 106, 109, 111]
+* **Validación Robusta de Parámetros:** Incluye validaciones para rangos de fechas y la lógica de ignorar el parámetro `juego` cuando `tipoLoteria` es `multijuego`. [cite: 108, 118]
 
 ## 3. Arquitectura y Seguridad
 
-[cite_start]La API se adhiere a los principios de una arquitectura RESTful, utilizando métodos HTTP estándar para operaciones sobre recursos identificables. [cite: 72] [cite_start]Toda la comunicación se realiza a través de **HTTPS** para garantizar la seguridad e integridad de los datos. [cite: 73]
+La API se adhiere a los principios de una arquitectura RESTful, utilizando métodos HTTP estándar para operaciones sobre recursos identificables. [cite: 72] Toda la comunicación se realiza a través de **HTTPS** para garantizar la seguridad e integridad de los datos. [cite: 73]
 
 ## 4. Formatos de Datos Soportados
 
-[cite_start]Esta API está diseñada para la máxima flexibilidad e interoperabilidad, permitiendo a los implementadores elegir entre JSON y XML. [cite: 76]
+Esta API está diseñada para la máxima flexibilidad e interoperabilidad, permitiendo a los implementadores elegir entre JSON y XML. [cite: 76]
 
 ### JSON (JavaScript Object Notation)
 
-[cite_start]Un formato ligero y ampliamente adoptado, recomendado para nuevas implementaciones y sistemas modernos debido a su rendimiento superior y facilidad de integración con ecosistemas de desarrollo modernos. [cite: 77, 80, 81]
+Un formato ligero y ampliamente adoptado, recomendado para nuevas implementaciones y sistemas modernos debido a su rendimiento superior y facilidad de integración con ecosistemas de desarrollo modernos. [cite: 77, 80, 81]
 
 ### XML (Extensible Markup Language)
 
-[cite_start]Un formato estructurado, provisto para asegurar la compatibilidad con sistemas legados que ya operan con estructuras basadas en XML y requieren homogeneidad en su arquitectura existente. [cite: 78, 79, 82]
+Un formato estructurado, provisto para asegurar la compatibilidad con sistemas legados que ya operan con estructuras basadas en XML y requieren homogeneidad en su arquitectura existente. [cite: 78, 79, 82]
 
-La elección del formato (JSON o XML) recae en el implementador de la API. [cite_start]Se espera que la API implementada devuelva el formato preferido por el sistema al que está sirviendo o, si lo desea, sea capaz de responder en ambos formatos si el consumidor lo indica (a través de la cabecera `Accept`). [cite: 83, 84]
+La elección del formato (JSON o XML) recae en el implementador de la API. Se espera que la API implementada devuelva el formato preferido por el sistema al que está sirviendo o, si lo desea, sea capaz de responder en ambos formatos si el consumidor lo indica (a través de la cabecera `Accept`). [cite: 83, 84]
 
 ## 5. Convenciones de Nomenclatura
 
-[cite_start]Para asegurar la consistencia en todas las implementaciones, se han adoptado las siguientes convenciones: [cite: 86]
+Para asegurar la consistencia en todas las implementaciones, se han adoptado las siguientes convenciones: [cite: 86]
 
-* [cite_start]**URLs de Endpoints:** Se utilizará `kebab-case` para los segmentos de URL (ej., `/api/v1/auth/token`). [cite: 86]
-* [cite_start]**Nombres de Propiedades (JSON) y Parámetros de Consulta:** Se utilizará `camelCase` (ej., `tokenType`, `expiresIn`). [cite: 87]
+* **URLs de Endpoints:** Se utilizará `kebab-case` para los segmentos de URL (ej., `/api/v1/auth/token`). [cite: 86]
+* **Nombres de Propiedades (JSON) y Parámetros de Consulta:** Se utilizará `camelCase` (ej., `tokenType`, `expiresIn`). [cite: 87]
 * **Nombres de Elementos (XML):**
-    * [cite_start]Elementos raíz y de objetos complejos: `PascalCase` (ej., `<AuthResponse>`, `<ErrorResponse>`). [cite: 88]
-    * [cite_start]Elementos anidados y de propiedades: `camelCase` (ej., `<tokenType>`, `<username>`). [cite: 89]
-    * [cite_start]Colecciones: Se representarán con un elemento contenedor (ej., `<salidaConsulta>`) que contendrá múltiples elementos hijos (ej., `<item>`). [cite: 89]
+    * Elementos raíz y de objetos complejos: `PascalCase` (ej., `<AuthResponse>`, `<ErrorResponse>`). [cite: 88]
+    * Elementos anidados y de propiedades: `camelCase` (ej., `<tokenType>`, `<username>`). [cite: 89]
+    * Colecciones: Se representarán con un elemento contenedor (ej., `<salidaConsulta>`) que contendrá múltiples elementos hijos (ej., `<item>`). [cite: 89]
 
-* [cite_start]**Codificación de Caracteres:** Todas las peticiones y respuestas deben utilizar la codificación de caracteres **UTF-8**. [cite: 90]
+* **Codificación de Caracteres:** Todas las peticiones y respuestas deben utilizar la codificación de caracteres **UTF-8**. [cite: 90]
 
 ## 6. Tipos de Datos
 
-[cite_start]La API maneja los siguientes tipos de datos estándar, que los implementadores deben mapear desde sus tipos de datos internos: [cite: 91, 92]
+La API maneja los siguientes tipos de datos estándar, que los implementadores deben mapear desde sus tipos de datos internos: [cite: 91, 92]
 
 | Tipo de Datos     | Descripción                         | JSON                 | XML (Ejemplo)                     |
 | :---------------- | :---------------------------------- | :------------------- | :-------------------------------- |
@@ -85,12 +85,12 @@ La elección del formato (JSON o XML) recae en el implementador de la API. [cite
 
 ## 7. Manejo de Valores Nulos
 
-* [cite_start]**JSON:** Los valores ausentes o nulos deben ser explícitamente representados con `null` (ej., `"juego": null`). [cite: 94]
-* [cite_start]**XML:** Los valores nulos deben ser representados por un elemento vacío (ej., `<juego/>`) o, preferiblemente, utilizando el atributo `xsi:nil="true"` (ej., `<juego xsi:nil="true"/>`) si se utilizan esquemas XSD para mayor robustez. [cite: 95]
+* **JSON:** Los valores ausentes o nulos deben ser explícitamente representados con `null` (ej., `"juego": null`). [cite: 94]
+* **XML:** Los valores nulos deben ser representados por un elemento vacío (ej., `<juego/>`) o, preferiblemente, utilizando el atributo `xsi:nil="true"` (ej., `<juego xsi:nil="true"/>`) si se utilizan esquemas XSD para mayor robustez. [cite: 95]
 
 ## 8. Endpoints
 
-[cite_start]A continuación, se describen los endpoints de la API, incluyendo el método HTTP, la URL, los parámetros de consulta (si aplica), y las estructuras de peticiones y respuestas para JSON y XML. [cite: 96]
+A continuación, se describen los endpoints de la API, incluyendo el método HTTP, la URL, los parámetros de consulta (si aplica), y las estructuras de peticiones y respuestas para JSON y XML. [cite: 96]
 
 ### Autenticación
 
@@ -98,7 +98,7 @@ La elección del formato (JSON o XML) recae en el implementador de la API. [cite
 
 * **URL:** `https://{{ip:puerto}}/api/v1/auth/token`
 * **Método:** `POST`
-* [cite_start]**Descripción:** Valida las credenciales de usuario y retorna un token de acceso Bearer válido por 7 días (604800 segundos). [cite: 97]
+* **Descripción:** Valida las credenciales de usuario y retorna un token de acceso Bearer válido por 7 días (604800 segundos). [cite: 97]
 * **Request Body (JSON):**
     ```json
     {
@@ -129,7 +129,7 @@ La elección del formato (JSON o XML) recae en el implementador de la API. [cite
       <accessToken>lksUJKdfGJKuJYiw78we3gkjkkjhjkdsJHHJJHJFDDD</accessToken>
     </AuthResponse>
     ```
-* [cite_start]**Header para subsiguientes consultas:** Para las posteriores consultas se requiere un token de tipo Bearer en la cabecera de autorización: [cite: 98, 99]
+* **Header para subsiguientes consultas:** Para las posteriores consultas se requiere un token de tipo Bearer en la cabecera de autorización: [cite: 98, 99]
     * `Header: Authorization`
     * `Value: Bearer <<token>>`
 
@@ -141,7 +141,7 @@ Estos endpoints no requieren parámetros de consulta, pero sí autenticación.
 
 * **URL:** `https://{{ip:puerto}}/api/v1/tipo-loteria`
 * **Método:** `GET` (Requiere autenticación)
-* [cite_start]**Descripción:** Retorna una lista de todos los tipos de lotería disponibles para consulta. [cite: 99]
+* **Descripción:** Retorna una lista de todos los tipos de lotería disponibles para consulta. [cite: 99]
 * **Response (200 OK - JSON):**
     ```json
     {
@@ -171,7 +171,7 @@ Estos endpoints no requieren parámetros de consulta, pero sí autenticación.
 
 * **URL:** `https://{{ip:puerto}}/api/v1/juegos`
 * **Método:** `GET` (Requiere autenticación)
-* [cite_start]**Descripción:** Retorna una lista de todos los juegos disponibles en el sistema. [cite: 100]
+* **Descripción:** Retorna una lista de todos los juegos disponibles en el sistema. [cite: 100]
 * **Response (200 OK - JSON):**
     ```json
     {
@@ -205,7 +205,7 @@ Estos endpoints no requieren parámetros de consulta, pero sí autenticación.
 
 * **URL:** `https://{{ip:puerto}}/api/v1/tipos-loteria/(tipo-loteria-id)/juegos`
 * **Método:** `GET` (Requiere autenticación)
-* [cite_start]**Descripción:** Retorna una lista de juegos asociados a un tipo de lotería específico. [cite: 101]
+* **Descripción:** Retorna una lista de juegos asociados a un tipo de lotería específico. [cite: 101]
 * **Path Parameter:**
     * `tipo-loteria-id`: Identificador del tipo de lotería (ej., `triple`).
 * **Response (200 OK - JSON):**
@@ -237,21 +237,21 @@ Estos endpoints no requieren parámetros de consulta, pero sí autenticación.
 
 * **URL:** `https://{{ip:puerto}}/api/v1/exportaciones`
 * **Método:** `GET` (Requiere autenticación)
-* [cite_start]**Descripción:** Obtiene datos de contabilidad filtrados según los parámetros proporcionados. [cite: 102]
+* **Descripción:** Obtiene datos de contabilidad filtrados según los parámetros proporcionados. [cite: 102]
 * **Query Parameters:**
-    1.  [cite_start]`entidad` (Obligatorio): Filtra el tipo de consulta. [cite: 102]
+    1.  `entidad` (Obligatorio): Filtra el tipo de consulta. [cite: 102]
         * `ag`: Para agencias.
         * `rc`: Para distribuidores (recogedores).
-    2.  `moneda` (Opcional): Filtra la moneda a consultar. [cite_start]Por defecto es `ved` (Bolívares digitales). [cite: 103]
+    2.  `moneda` (Opcional): Filtra la moneda a consultar. Por defecto es `ved` (Bolívares digitales). [cite: 103]
         * `ved`: Para bolívares digitales.
         * `usd`: Para dólares estadounidenses.
-    3.  [cite_start]`fechaDesde` (Obligatorio): Fecha inicial de la consulta en formato `YYYY-MM-DD`. [cite: 105]
-    4.  `fechaHasta` (Opcional): Fecha final de la consulta en formato `YYYY-MM-DD`. [cite_start]Si no se coloca, se retorna por defecto hasta la fecha anterior al momento de la consulta. [cite: 106]
-        * [cite_start]**Nota Importante:** No se pueden consultar datos de la fecha actual; los datos se actualizan hasta el día anterior (ej., si hoy es 03/07/2025, la venta del 03 no estará disponible, solo hasta el 02). [cite: 107, 108]
-        * [cite_start]**Validación:** `fechaDesde` debe ser menor o igual que `fechaHasta`. [cite: 108]
-    5.  `tipoLoteria` (Opcional): Define el tipo de lotería. Por defecto es `multijuego`. [cite_start]Los valores posibles se pueden obtener del endpoint `/api/v1/tipo-loteria`. [cite: 109, 110]
-    6.  `juego` (Opcional): Define un juego en específico. Si no se coloca, se retornan por defecto todos los valores de los juegos asociados a este tipo de lotería. [cite_start]Los valores posibles se pueden obtener de `/api/v1/juegos` o `/api/v1/tipos-loteria/{tipo-loteria-id}/juegos`. [cite: 111, 112]
-        * [cite_start]**Nota Importante:** Si `tipoLoteria` es `multijuego` (manual o por defecto), el parámetro `juego` será desechado y se retornará `null` en el objeto `metadata` de la respuesta JSON/XML. [cite: 117, 118]
+    3.  `fechaDesde` (Obligatorio): Fecha inicial de la consulta en formato `YYYY-MM-DD`. [cite: 105]
+    4.  `fechaHasta` (Opcional): Fecha final de la consulta en formato `YYYY-MM-DD`. Si no se coloca, se retorna por defecto hasta la fecha anterior al momento de la consulta. [cite: 106]
+        * **Nota Importante:** No se pueden consultar datos de la fecha actual; los datos se actualizan hasta el día anterior (ej., si hoy es 03/07/2025, la venta del 03 no estará disponible, solo hasta el 02). [cite: 107, 108]
+        * **Validación:** `fechaDesde` debe ser menor o igual que `fechaHasta`. [cite: 108]
+    5.  `tipoLoteria` (Opcional): Define el tipo de lotería. Por defecto es `multijuego`. Los valores posibles se pueden obtener del endpoint `/api/v1/tipo-loteria`. [cite: 109, 110]
+    6.  `juego` (Opcional): Define un juego en específico. Si no se coloca, se retornan por defecto todos los valores de los juegos asociados a este tipo de lotería. Los valores posibles se pueden obtener de `/api/v1/juegos` o `/api/v1/tipos-loteria/{tipo-loteria-id}/juegos`. [cite: 111, 112]
+        * **Nota Importante:** Si `tipoLoteria` es `multijuego` (manual o por defecto), el parámetro `juego` será desechado y se retornará `null` en el objeto `metadata` de la respuesta JSON/XML. [cite: 117, 118]
 
 * **Ejemplo de Consulta (cURL):**
     ```bash
@@ -259,7 +259,7 @@ Estos endpoints no requieren parámetros de consulta, pero sí autenticación.
     "https://{{ip:puerto}}/api/v1/exportaciones?entidad=rc&moneda=ved&fechaDesde=2025-07-01&fechaHasta=2025-07-03&tipoLoteria=triple&juego=trio-activo" \
     -H "Authorization: Bearer lksUJKdfGJKuJYiw78we3gkjkkjhjkdsJHHJJHJFDDD"
     ```
-* [cite_start]**Response (200 OK - JSON - Ejemplo de Consulta Específica):** [cite: 113]
+* **Response (200 OK - JSON - Ejemplo de Consulta Específica):** [cite: 113]
     ```json
     {
       "metadata": {
@@ -293,7 +293,7 @@ Estos endpoints no requieren parámetros de consulta, pero sí autenticación.
       ]
     }
     ```
-* [cite_start]**Response (200 OK - XML - Ejemplo de Consulta Específica):** [cite: 114]
+* **Response (200 OK - XML - Ejemplo de Consulta Específica):** [cite: 114]
     ```xml
     <ExportResponse>
       <metadata>
@@ -332,7 +332,7 @@ Estos endpoints no requieren parámetros de consulta, pero sí autenticación.
 La API utiliza códigos de estado HTTP estándar para indicar el resultado de una operación. En caso de error, se proporciona una estructura de respuesta consistente.
 
 * **401 Unauthorized:**
-    * [cite_start]**Causa:** Token de autenticación inválido o expirado. [cite: 119]
+    * **Causa:** Token de autenticación inválido o expirado. [cite: 119]
     * **JSON:**
         ```json
         {
@@ -349,7 +349,7 @@ La API utiliza códigos de estado HTTP estándar para indicar el resultado de un
           <mensaje>Token de autenticación inválido o expirado.</mensaje>
         </ErrorResponse>
         ```
-    * [cite_start]**Causa:** Credenciales de usuario incorrectas. [cite: 125]
+    * **Causa:** Credenciales de usuario incorrectas. [cite: 125]
     * **JSON:**
         ```json
         {
@@ -368,7 +368,7 @@ La API utiliza códigos de estado HTTP estándar para indicar el resultado de un
         ```
 
 * **400 Bad Request:**
-    * [cite_start]**Causa:** `fechaDesde` es mayor que `fechaHasta`. [cite: 120]
+    * **Causa:** `fechaDesde` es mayor que `fechaHasta`. [cite: 120]
     * **JSON:**
         ```json
         {
@@ -385,7 +385,7 @@ La API utiliza códigos de estado HTTP estándar para indicar el resultado de un
           <mensaje>La fechaDesde no puede ser mayor que la fechaHasta</mensaje>
         </ErrorResponse>
         ```
-    * [cite_start]**Causa:** Intento de consultar datos de la fecha actual. [cite: 122]
+    * **Causa:** Intento de consultar datos de la fecha actual. [cite: 122]
     * **JSON:**
         ```json
         {
@@ -405,7 +405,7 @@ La API utiliza códigos de estado HTTP estándar para indicar el resultado de un
 
 ## 10. Anexos
 
-* [cite_start]**Lista de tipos de lotería (referenciales):** [cite: 126]
+* **Lista de tipos de lotería (referenciales):** [cite: 126]
     1.  triple
     2.  terminal
     3.  figura
@@ -421,7 +421,7 @@ La API utiliza códigos de estado HTTP estándar para indicar el resultado de un
     13. multijuego
     14. bancos
 
-* [cite_start]**Lista de juegos (referenciales):** [cite: 126]
+* **Lista de juegos (referenciales):** [cite: 126]
     1.  activo
     2.  bomba
     3.  caliente
@@ -465,17 +465,15 @@ La API utiliza códigos de estado HTTP estándar para indicar el resultado de un
     41. zamorano
     42. zulia
 
-* **Esquemas XML (XSD):** Se proporcionan esquemas XSD para definir la estructura y los tipos de datos para los mensajes XML de la API. [cite_start]Estos pueden ser utilizados por los implementadores para validar sus peticiones y respuestas. [cite: 127, 128]
+* **Esquemas XML (XSD):** Se proporcionan esquemas XSD para definir la estructura y los tipos de datos para los mensajes XML de la API. Estos pueden ser utilizados por los implementadores para validar sus peticiones y respuestas. [cite: 127, 128]
 
-    * [cite_start][Esquema para Petición de Autenticación](https://your-api-docs-link/AuthRequest.xsd) (Ejemplo de ubicación) [cite: 129]
-    * [cite_start][Esquema para Respuesta de Autenticación](https://your-api-docs-link/AuthResponse.xsd) (Ejemplo de ubicación) [cite: 129]
-    * [cite_start][Esquema para Respuesta de Tipos de Lotería](https://your-api-docs-link/TiposLoteriaResponse.xsd) (Ejemplo de ubicación) [cite: 130]
-    * [cite_start][Esquema para Respuesta de Juegos](https://your-api-docs-link/JuegosResponse.xsd) (Ejemplo de ubicación) [cite: 130]
-    * [cite_start][Esquema para Respuesta de Juegos por Tipo de Lotería](https://your-api-docs-link/TipoLoteriaJuegosResponse.xsd) (Ejemplo de ubicación) [cite: 131]
-    * [cite_start][Esquema para Respuesta de Error](https://your-api-docs-link/ErrorResponse.xsd) (Ejemplo de ubicación) [cite: 131]
-    * [cite_start][Esquema para Respuesta de Exportación](https://your-api-docs-link/ExportResponse.xsd) (Ejemplo de ubicación) [cite: 132]
-
-    [cite_start]**Nota:** Asegúrese de reemplazar `http://yourcompany.com/schemas/...` con el namespace adecuado para su organización y de que sea consistente en todos los esquemas. [cite: 129]
+    * Esquema para Petición de Autenticación [cite: 129]
+    * Esquema para Respuesta de Autenticación [cite: 129]
+    * Esquema para Respuesta de Tipos de Lotería [cite: 130]
+    * Esquema para Respuesta de Juegos [cite: 130]
+    * Esquema para Respuesta de Juegos por Tipo de Lotería [cite: 131]
+    * Esquema para Respuesta de Error [cite: 131]
+    * Esquema para Respuesta de Exportación [cite: 132]
 
 ## 11. Cómo Contribuir
 
