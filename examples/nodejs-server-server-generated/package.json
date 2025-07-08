@@ -1,0 +1,20 @@
+{
+  "name": "est-ndar-para-las-apis-de-exportaci-n-de-datos-de-loter-a",
+  "version": "1.2",
+  "description": "Especificación para las APIs de exportación de datos de lotería, diseñada para ser implementada por sistemas heterogéneos, soportando formatos JSON y XML.   El objetivo es homogeneizar la forma en que los datos son expuestos.  ## Características principales: - Soporte dual para JSON y XML - Autenticación Bearer Token - Filtrado flexible por entidad, moneda, fechas y tipo de lotería - Validación robusta de parámetros  ## Límites importantes: - Solo se pueden consultar datos hasta el día anterior (fecha actual -1) - fechaDesde debe ser menor o igual a fechaHasta - Token de acceso válido por 7 días (604800 segundos) ",
+  "main": "index.js",
+  "scripts": {
+	"prestart": "npm install",
+	"start": "node index.js"
+  },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Unlicense",
+  "private": true,
+  "dependencies": {
+    "connect": "^3.2.0",
+    "js-yaml": "^3.3.0",
+    "oas3-tools": "^2.2.3"
+  }
+}

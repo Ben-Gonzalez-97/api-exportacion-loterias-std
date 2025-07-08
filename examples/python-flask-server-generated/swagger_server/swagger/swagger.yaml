@@ -1,0 +1,720 @@
+openapi: 3.0.0
+info:
+  title: Estándar Para Las APIs De Exportación De Datos De Lotería
+  description: "Especificación para las APIs de exportación de datos de lotería, diseñ\
+    ada para ser implementada por sistemas heterogéneos, soportando formatos JSON\
+    \ y XML. \n\nEl objetivo es homogeneizar la forma en que los datos son expuestos.\n\
+    \n## Características principales:\n- Soporte dual para JSON y XML\n- Autenticació\
+    n Bearer Token\n- Filtrado flexible por entidad, moneda, fechas y tipo de loterí\
+    a\n- Validación robusta de parámetros\n\n## Límites importantes:\n- Solo se pueden\
+    \ consultar datos hasta el día anterior (fecha actual -1)\n- fechaDesde debe ser\
+    \ menor o igual a fechaHasta\n- Token de acceso válido por 7 días (604800 segundos)\n"
+  contact:
+    name: Ing. Ben Gonzalez
+    email: ben.gonzalez@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: "1.2"
+servers:
+- url: https://virtserver.swaggerhub.com/oreon3000organizatio/api-exportacion-loterias-std/1.2
+  description: SwaggerHub API Auto Mocking
+- url: "https://{ip}:{puerto}/api/v1"
+  description: Servidor de producción
+  variables:
+    ip:
+      description: Dirección IP o dominio del servidor
+      default: localhost
+    puerto:
+      description: Puerto del servidor
+      default: "8080"
+tags:
+- name: Autenticación
+  description: Endpoints para gestión de tokens de acceso
+- name: Catálogos
+  description: Endpoints para obtener listas de tipos de lotería y juegos
+- name: Exportaciones
+  description: Endpoints para exportación de datos de contabilidad
+paths:
+  /auth/token:
+    post:
+      tags:
+      - Autenticación
+      summary: Obtiene un token de autenticación
+      description: Valida las credenciales de usuario y retorna un token de acceso
+        Bearer válido por 7 días.
+      operationId: auth_token_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+            example:
+              username: admin-user
+              password: secure-password-123
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/AuthRequest"
+            example: |
+              <AuthRequest>
+                <username>admin-user</username>
+                <password>secure-password-123</password>
+              </AuthRequest>
+        required: true
+      responses:
+        "200":
+          description: Autenticación exitosa. Retorna el token de acceso.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+              example:
+                tokenType: Bearer
+                expiresIn: 604800
+                accessToken: lksUJKdfGJKuJYiw78we3gkjkkjhjkdsJHHJJHJFDDD
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+              example: |
+                <AuthResponse>
+                  <tokenType>Bearer</tokenType>
+                  <expiresIn>604800</expiresIn>
+                  <accessToken>lksUJKdfGJKuJYiw78we3gkjkkjhjkdsJHHJJHJFDDD</accessToken>
+                </AuthResponse>
+        "401":
+          description: No autorizado. Credenciales inválidas.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  codigo: INVALID-CREDENTIALS
+                  mensaje: El usuario o la contraseña son incorrectos.
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-openapi-router-controller: swagger_server.controllers.autenticación_controller
+  /tipo-loteria:
+    get:
+      tags:
+      - Catálogos
+      summary: Obtiene la lista de tipos de lotería
+      description: Retorna una lista de todos los tipos de lotería disponibles para
+        consulta.
+      operationId: tipo_loteria_get
+      responses:
+        "200":
+          description: Lista de tipos de lotería.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200"
+              example:
+                tipoLoteria:
+                - triple
+                - terminal
+                - recargas
+                - multijuego
+                - juego-electronico
+                - animalito
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/TiposLoteriaResponse"
+        "401":
+          description: No autorizado. El token es inválido o ha expirado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  codigo: TOKEN-INVALID
+                  mensaje: Token de autenticación inválido o expirado.
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+      x-openapi-router-controller: swagger_server.controllers.catálogos_controller
+  /juegos:
+    get:
+      tags:
+      - Catálogos
+      summary: Obtiene la lista de todos los juegos
+      description: Retorna una lista de todos los juegos disponibles en el sistema.
+      operationId: juegos_get
+      responses:
+        "200":
+          description: Lista de todos los juegos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200_1"
+              example:
+                juegos:
+                - activo
+                - bomba
+                - caliente
+                - granjita
+                - lotto-activo
+                - ruleta-activa
+                - uneloton
+                - zulia
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/JuegosResponse"
+        "401":
+          description: No autorizado. El token es inválido o ha expirado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  codigo: TOKEN-INVALID
+                  mensaje: Token de autenticación inválido o expirado.
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+      x-openapi-router-controller: swagger_server.controllers.catálogos_controller
+  /tipos-loteria/{tipoLoteriaId}/juegos:
+    get:
+      tags:
+      - Catálogos
+      summary: Obtiene los juegos por tipo de lotería
+      description: Retorna una lista de juegos asociados a un tipo de lotería específico.
+      operationId: tipos_loteria_tipo_loteria_id_juegos_get
+      parameters:
+      - name: tipoLoteriaId
+        in: path
+        description: El identificador del tipo de lotería.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          enum:
+          - triple
+          - terminal
+          - recargas
+          - multijuego
+          - juego-electronico
+          - animalito
+        example: triple
+      responses:
+        "200":
+          description: Lista de juegos para el tipo de lotería especificado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TipoLoteriaJuegosResponse"
+              example:
+                tipoLoteria: triple
+                juegos:
+                - trio-activo
+                - chance
+                - terminaltrio
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/TipoLoteriaJuegosResponse"
+        "401":
+          description: No autorizado. El token es inválido o ha expirado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  codigo: TOKEN-INVALID
+                  mensaje: Token de autenticación inválido o expirado.
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Tipo de lotería no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+      x-openapi-router-controller: swagger_server.controllers.catálogos_controller
+  /exportaciones:
+    get:
+      tags:
+      - Exportaciones
+      summary: Realiza una exportación de datos
+      description: |
+        Obtiene datos de contabilidad filtrados según los parámetros proporcionados.
+
+        **Limitaciones importantes:**
+        - Solo se pueden consultar datos hasta el día anterior (fecha actual -1)
+        - fechaDesde debe ser menor o igual a fechaHasta
+        - Para tipoLoteria=multijuego, el parámetro juego será ignorado
+      operationId: exportaciones_get
+      parameters:
+      - name: entidad
+        in: query
+        description: Filtra por agencias ('ag') o distribuidores ('rc').
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - ag
+          - rc
+        example: rc
+      - name: moneda
+        in: query
+        description: Filtra por moneda. Por defecto es 'ved' (bolívares digitales).
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: ved
+          enum:
+          - ved
+          - usd
+        example: ved
+      - name: fechaDesde
+        in: query
+        description: Fecha inicial de la consulta en formato YYYY-MM-DD. Debe ser
+          anterior a la fecha actual.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date
+        example: 2025-07-01
+      - name: fechaHasta
+        in: query
+        description: "Fecha final de la consulta en formato YYYY-MM-DD. Si no se especifica,\
+          \ se usa la fecha anterior a la consulta."
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: date
+        example: 2025-07-03
+      - name: tipoLoteria
+        in: query
+        description: Define el tipo de lotería. Por defecto es 'multijuego'.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: multijuego
+          enum:
+          - triple
+          - terminal
+          - recargas
+          - multijuego
+          - juego-electronico
+          - animalito
+        example: triple
+      - name: juego
+        in: query
+        description: Define un juego específico. Se ignora si tipoLoteria es 'multijuego'.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: trio-activo
+      responses:
+        "200":
+          description: Exportación de datos exitosa.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportResponse"
+              examples:
+                consulta_especifica:
+                  summary: Consulta específica por juego
+                  value:
+                    metadata:
+                      entidad: rc
+                      moneda: ved
+                      fechaDesde: 2025-07-01
+                      fechaHasta: 2025-07-03
+                      tipoLoteria: triple
+                      juego: trio-activo
+                    salidaConsulta:
+                    - nombre: distribuidor-1
+                      venta: 12865
+                      premio: 4500
+                      porcentajeVenta: 1801.1
+                      total: 6563.9
+                      tipoLoteria: triple
+                      juego: trio-activo
+                consulta_multijuego:
+                  summary: Consulta multijuego
+                  value:
+                    metadata:
+                      entidad: ag
+                      moneda: usd
+                      fechaDesde: 2025-07-01
+                      fechaHasta: 2025-07-03
+                      tipoLoteria: multijuego
+                    salidaConsulta:
+                    - nombre: agencia-1
+                      venta: 12865
+                      premio: 4500
+                      porcentajeVenta: 1801.1
+                      total: 6563.9
+                      tipoLoteria: triple
+                      juego: trio-activo
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ExportResponse"
+        "400":
+          description: Petición incorrecta.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                invalid_date_range:
+                  summary: Rango de fechas inválido
+                  value:
+                    error:
+                      codigo: INVALID-DATE-RANGE
+                      mensaje: La fechaDesde no puede ser mayor que la fechaHasta.
+                future_date:
+                  summary: Consulta fecha futura
+                  value:
+                    error:
+                      codigo: FUTURE-DATE-QUERY
+                      mensaje: No se pueden consultar datos de la fecha actual; los
+                        datos se actualizan hasta el día anterior.
+        "401":
+          description: No autorizado. El token es inválido o ha expirado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  codigo: TOKEN-INVALID
+                  mensaje: Token de autenticación inválido o expirado.
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      security:
+      - bearerAuth: []
+      x-openapi-router-controller: swagger_server.controllers.exportaciones_controller
+components:
+  schemas:
+    AuthRequest:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          maxLength: 50
+          minLength: 3
+          type: string
+          description: Nombre de usuario para autenticación
+          example: admin-user
+        password:
+          maxLength: 100
+          minLength: 8
+          type: string
+          description: Contraseña del usuario
+          format: password
+          example: secure-password-123
+      xml:
+        name: AuthRequest
+    AuthResponse:
+      type: object
+      properties:
+        tokenType:
+          type: string
+          description: Tipo de token (siempre 'Bearer')
+          example: Bearer
+        expiresIn:
+          type: integer
+          description: Tiempo de expiración del token en segundos
+          format: int64
+          example: 604800
+        accessToken:
+          type: string
+          description: Token de acceso JWT
+          example: lksUJKdfGJKuJYiw78we3gkjkkjhjkdsJHHJJHJFDDD
+      example:
+        expiresIn: 604800
+        tokenType: Bearer
+        accessToken: lksUJKdfGJKuJYiw78we3gkjkkjhjkdsJHHJJHJFDDD
+      xml:
+        name: AuthResponse
+    TiposLoteriaResponse:
+      type: object
+      properties:
+        tipoLoteria:
+          type: array
+          description: Lista de tipos de lotería disponibles
+          xml:
+            wrapped: false
+          items:
+            type: string
+            xml:
+              name: tipoLoteria
+            enum:
+            - triple
+            - terminal
+            - recargas
+            - multijuego
+            - juego-electronico
+            - animalito
+      xml:
+        name: TiposLoteriaResponse
+    JuegosResponse:
+      type: object
+      properties:
+        juegos:
+          type: array
+          description: Lista de todos los juegos disponibles
+          xml:
+            wrapped: false
+          items:
+            type: string
+            xml:
+              name: juego
+      xml:
+        name: JuegosResponse
+    TipoLoteriaJuegosResponse:
+      type: object
+      properties:
+        tipoLoteria:
+          type: string
+          description: Tipo de lotería consultado
+          example: triple
+        juegos:
+          type: array
+          description: Lista de juegos asociados al tipo de lotería
+          xml:
+            name: juegos
+            wrapped: true
+          items:
+            type: string
+            xml:
+              name: juego
+      example:
+        juegos:
+        - juegos
+        - juegos
+        tipoLoteria: triple
+      xml:
+        name: TipoLoteriaJuegosResponse
+    ExportResponse:
+      type: object
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        salidaConsulta:
+          type: array
+          description: Resultados de la consulta
+          xml:
+            name: salidaConsulta
+            wrapped: true
+          items:
+            $ref: "#/components/schemas/ItemConsulta"
+      example:
+        metadata:
+          fechaHasta: 2025-07-03T00:00:00.000+00:00
+          fechaDesde: 2025-07-01T00:00:00.000+00:00
+          entidad: rc
+          moneda: ved
+          tipoLoteria: triple
+          juego: trio-activo
+        salidaConsulta:
+        - porcentajeVenta: 1801.1
+          venta: 12865
+          total: 6563.9
+          premio: 4500
+          tipoLoteria: triple
+          nombre: distribuidor-1
+          juego: trio-activo
+        - porcentajeVenta: 1801.1
+          venta: 12865
+          total: 6563.9
+          premio: 4500
+          tipoLoteria: triple
+          nombre: distribuidor-1
+          juego: trio-activo
+      xml:
+        name: ExportResponse
+    Metadata:
+      type: object
+      properties:
+        entidad:
+          type: string
+          description: Tipo de entidad consultada
+          example: rc
+          enum:
+          - ag
+          - rc
+        moneda:
+          type: string
+          description: Moneda de los valores
+          example: ved
+          enum:
+          - ved
+          - usd
+        fechaDesde:
+          type: string
+          description: Fecha inicial de la consulta
+          format: date
+          example: 2025-07-01
+        fechaHasta:
+          type: string
+          description: Fecha final de la consulta
+          format: date
+          example: 2025-07-03
+        tipoLoteria:
+          type: string
+          description: Tipo de lotería consultado
+          example: triple
+        juego:
+          type: string
+          description: Juego específico consultado (null para multijuego)
+          nullable: true
+          example: trio-activo
+      example:
+        fechaHasta: 2025-07-03T00:00:00.000+00:00
+        fechaDesde: 2025-07-01T00:00:00.000+00:00
+        entidad: rc
+        moneda: ved
+        tipoLoteria: triple
+        juego: trio-activo
+      xml:
+        name: metadata
+    ItemConsulta:
+      type: object
+      properties:
+        nombre:
+          type: string
+          description: Nombre del distribuidor o agencia
+          example: distribuidor-1
+        venta:
+          minimum: 0
+          type: number
+          description: Monto total de ventas
+          format: double
+          example: 12865
+        premio:
+          minimum: 0
+          type: number
+          description: Monto total de premios pagados
+          format: double
+          example: 4500
+        porcentajeVenta:
+          minimum: 0
+          type: number
+          description: Porcentaje de comisión sobre ventas
+          format: double
+          example: 1801.1
+        total:
+          type: number
+          description: Balance total (venta - premio - porcentajeVenta)
+          format: double
+          example: 6563.9
+        tipoLoteria:
+          type: string
+          description: Tipo de lotería del registro
+          example: triple
+        juego:
+          type: string
+          description: Juego específico del registro
+          example: trio-activo
+      example:
+        porcentajeVenta: 1801.1
+        venta: 12865
+        total: 6563.9
+        premio: 4500
+        tipoLoteria: triple
+        nombre: distribuidor-1
+        juego: trio-activo
+      xml:
+        name: item
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorResponse_error"
+      xml:
+        name: ErrorResponse
+    inline_response_200:
+      type: object
+      properties:
+        tipoLoteria:
+          type: array
+          items:
+            type: string
+            enum:
+            - triple
+            - terminal
+            - recargas
+            - multijuego
+            - juego-electronico
+            - animalito
+      example:
+        tipoLoteria:
+        - triple
+        - triple
+    inline_response_200_1:
+      type: object
+      properties:
+        juegos:
+          type: array
+          items:
+            type: string
+      example:
+        juegos:
+        - juegos
+        - juegos
+    ErrorResponse_error:
+      type: object
+      properties:
+        codigo:
+          type: string
+          description: Código de error identificador
+          example: TOKEN-INVALID
+        mensaje:
+          type: string
+          description: Mensaje descriptivo del error
+          example: Token de autenticación inválido o expirado.
+      xml:
+        name: error
+  responses:
+    UnauthorizedError:
+      description: No autorizado. El token es inválido o ha expirado.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              codigo: TOKEN-INVALID
+              mensaje: Token de autenticación inválido o expirado.
+        application/xml:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: Token de acceso obtenido desde el endpoint /auth/token. Válido
+        por 7 días.
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: swagger_server.controllers.authorization_controller.check_bearerAuth
+
